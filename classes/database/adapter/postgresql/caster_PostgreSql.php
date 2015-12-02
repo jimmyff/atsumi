@@ -39,6 +39,8 @@ class caster_PostgreSql extends caster_Abstract {
 		'i' => 'integer',
 		'I' => 'integerOrNull',
 		'l' => 'literal',
+		'j'	=> 'json',
+		'J'	=> 'jsonOrNull',
 		'n' => 'numeric',
 		'N' => 'numericOrNull',
 		'q' => 'fullTextQuery',
@@ -204,7 +206,7 @@ class caster_PostgreSql extends caster_Abstract {
 		if (is_null($in)) return 'NULL';
 		return sf("%s::BIGINT", intval($in));
 	}
-	
+
 	/**
 	 * Casts a variable into a PostgreSQL numeric
 	 * @param mixed $in Mixed to be casted
@@ -221,6 +223,25 @@ class caster_PostgreSql extends caster_Abstract {
 	static function numericOrNull($in) {
 		if (is_null($in)) return 'NULL';
 		return sf("%s::NUMERIC", $in);
+	}
+
+	/**
+	 * Casts a variable into a PostgreSQL json
+	 * @param mixed $in Mixed to be casted
+	 * @return string Casted string
+	 */
+	static function json($in) {
+		return sf("%s::JSON", json_encode($in));
+	}
+
+	/**
+	 * Casts a variable into a PostgreSQL json or Null
+	 * @param int $in Mixed to be casted
+	 * @return string Casted string
+	 */
+	static function jsonOrNull($in) {
+		if (is_null($in)) return 'NULL';
+		return self::json($in);
 	}
 
 	/**

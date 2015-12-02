@@ -37,6 +37,8 @@ class caster_PostgreSqlToPhp extends caster_Abstract {
 		'G' => 'geometryOrNull',
 		'i' => 'integer',
 		'I' => 'integerOrNull',
+		'j' => 'json',
+		'J' => 'jsonOrNull',
 		'n' => 'numeric',
 		'N' => 'numericOrNull',
 		'f' => 'float',
@@ -203,6 +205,15 @@ class caster_PostgreSqlToPhp extends caster_Abstract {
 		if (is_null($in)) return null;
 		if (!is_numeric($in)) throw new caster_StrictTypeException('Expected Numeric, received: '.$in.' ('.gettype($in).')');
 		return $in;
+	}
+
+	static function json($in) {
+		return json_decode($in);
+	}
+
+	static function jsonOrNull($in) {
+		if (is_null($in)) return null;
+		else return self::json($in);
 	}
 	
 
