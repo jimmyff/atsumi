@@ -52,7 +52,7 @@ abstract class mvc_AbstractDaoModel extends mvc_AbstractModel {
 	*/
 
 	/* generic */
-	static protected function load ($db, $where = null, $orderBy = null, $offset = null, $limit = null) {
+	static public function load ($db, $where = null, $orderBy = null, $offset = null, $limit = null) {
 
 		if (is_null($where)) $where = '';
 		else $where = ' where '.$where;

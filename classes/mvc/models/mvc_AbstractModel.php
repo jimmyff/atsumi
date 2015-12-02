@@ -4,6 +4,7 @@ abstract class mvc_AbstractModel {
 	const OUTPUT_FORMAT_ASSOC 		= 1;
 	const OUTPUT_FORMAT_STD_CLASS 	= 2;
 	const OUTPUT_FORMAT_OBJECT 		= 3;
+	const OUTPUT_FORMAT_HTML 		= 4;
 
 	/* generic */
 	protected $data = array();
@@ -299,6 +300,19 @@ abstract class mvc_AbstractModel {
 
 					$out[$key] = self::outputItem($this->get($key), $type);
 				}
+				return $out;
+
+			// Std Class
+			case self::OUTPUT_FORMAT_HTML:
+				$data = self::output(self::OUTPUT_FORMAT_ASSOC);
+				$out = sfl('<table class="mvc-model"><tbody>');
+				foreach($data as $key => $value) {
+					$out .= sfl("<tr><td>%s</td><td>%s</td></tr>",
+						$key,
+						json_encode($value, JSON_PRETTY_PRINT)
+					);
+				}
+				$out .= sfl("</tbody></table>");
 				return $out;
 		}
 
