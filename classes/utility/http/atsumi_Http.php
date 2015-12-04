@@ -68,7 +68,7 @@ class atsumi_Http {
 	const	POST_METHOD_CURL		= 1;
 	const 	POST_METHOD_PECL		= 2;
 
-	static public function post ($url, $fields, $method = 1, $httpHeaders = array(), &$httpRequestHeaders = false, $options = array()) {
+	static public function post ($url, $fields, $method = self::POST_METHOD_CURL, $httpHeaders = array(), &$httpRequestHeaders = false, $options = array()) {
 
 		switch ($method) {
 
