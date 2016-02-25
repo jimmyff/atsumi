@@ -259,7 +259,17 @@ abstract class mvc_AbstractModel {
 		return pretty($this->output());
 	}
 
-	function output ($type = self::OUTPUT_FORMAT_ASSOC) {
+
+    static public function outputArray ($arr, $type = self::OUTPUT_FORMAT_ASSOC) {
+
+        $out = array();
+        foreach ($arr as $o)
+            $out[] = $o->output($type);
+        
+        return $out;
+    }
+
+    function output ($type = self::OUTPUT_FORMAT_ASSOC) {
 
 		$this->preOutput($type);
 

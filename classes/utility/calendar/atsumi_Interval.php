@@ -53,6 +53,14 @@ class atsumi_Interval {
 		);
 	}
 
+    static public function addInterval (self $i1, self $i2) {
+        return new self($i1->inSeconds() + $i2->inSeconds());
+    }
+    
+    static public function minusInterval (self $i1, self $i2) {
+        return new self($i1->inSeconds() - $i2->inSeconds());
+    }
+    
 	public function add (self $interval) {
 		$this->seconds += $interval->inSeconds();
 	}
@@ -83,6 +91,8 @@ class atsumi_Interval {
 	public function getFormatBreakdown() {
 
 		$remainder = $this->inSeconds();
+        $negative = $remainder < 0;
+        if ($negative) $remainder = $remainder *-1;
 
 		$years = floor($remainder / self::DURATION_YEAR);
 		$remainder -= $years * self::DURATION_YEAR;
@@ -98,7 +108,10 @@ class atsumi_Interval {
 
 		$seconds = floor($remainder);
 
+        $posOrNeg = $negative?-1:1;
+        
 		return array(
+            'positive' => !$negative,
 			'years' => $years,
 			'days' => $days,
 			'hours' => $hours,
@@ -111,7 +124,9 @@ class atsumi_Interval {
 
 		$formatComponents = $this->getFormatBreakdown();
 
-		return sf('%s%s%s:%s:%s',
+		return sf('%s%s%s%s:%s:%s',
+
+            !$formatComponents['positive']?'-':'',
 			$formatComponents['years']?sf('%sy ',$formatComponents['years']):'',
 			$formatComponents['days']||$formatComponents['days']?sf('%sd ',$formatComponents['days']):'',
 			sprintf('%02d', $formatComponents['hours']),
