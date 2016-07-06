@@ -2,20 +2,35 @@
 // Abstract data access model
 abstract class mvc_AbstractDaoModel extends mvc_AbstractModel {
 
+    const DB_PKEY           = 'id';
+    const DB_PKEY_AUTO_INC   = true;
 
+    public $DB_STORED       = false;
+    
 	static public function write ($db, $o) {
 
+        if (!($o instanceof self))
+            throw new Exception (sf(
+                'DAO Write: Expected object of class %s, got %s',
+                get_class(),
+                is_null($o)?'NULL':get_class($o)
+            )
+            );
 
-		$method = !is_null($o->get('id', false))?'update':'insert';
-
+        if (static::DB_PKEY_AUTO_INC)
+    		$method = !is_null($o->get(static::DB_PKEY, false))?'update':'insert';
+        else
+            $method = $o->DB_STORED?'update':'insert';
+                
 		$args = array();
 
 		if ($method == 'update') {
-			$args[] = sf('%s = %s', 'id', $o->get('id'));
+			$args[] = sf('%s = %s', static::DB_PKEY, $o->get(static::DB_PKEY));
 		}
 
 //		$vars = $this->getChanges();
 		foreach($o->data as $key => $value) {
+            if (is_null($value) && $key == self::DB_PKEY && self::DB_PKEY_AUTO_INC) continue;
 			if (!$o->structure[$key]['write']) continue;
 			$args[] = sf('%s = %%%s', $key, $o->structure[$key]['type']);
 			$args[] = $value;
@@ -26,11 +41,14 @@ abstract class mvc_AbstractDaoModel extends mvc_AbstractModel {
 
 		array_unshift($args, static::DB_TABLE_NAME);
 
+        
 		$result = call_user_func_array(array($db, $method), $args);
 
-		if (is_null($o->get('id', false))) {
+        $o->DB_STORED = true;
+        
+		if (is_null($o->get(static::DB_PKEY, false)) && static::DB_PKEY_AUTO_INC) {
 			$id = $db->selectOne('select lastval()');
-			$o->set('id', $id->i_lastval, true);
+			$o->set(static::DB_PKEY, $id->i_lastval, true);
 		}
 
 	}
@@ -81,6 +99,7 @@ abstract class mvc_AbstractDaoModel extends mvc_AbstractModel {
 
 		foreach ($rows as $row) {
 			$obj = new static();
+            $obj->DB_STORED = true;
 			$obj->populateFromSqlRow($row);
 			$arrOut[] = $obj;
 		}

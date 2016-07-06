@@ -105,19 +105,25 @@ abstract class mvc_AbstractModel {
 		 return array_key_exists($k, $this->data) && isset($this->data[$k]);
 	}
 
+    function _mutateOnSet($k, $v) {
+        return $v;
+    }
+    
 	/* generic */
 	function set ($k, $v, $force = false) {
 
+        
 		if (!$force &&
 			(
 				isset($this->structure[$k]['write']) &&
 				$this->structure[$k]['write'] == false
 			)
 		)
-			throw new Exception ('Column not writable');
+			throw new Exception ("Column '$k' not writable");
 
-		
-		if (isset($this->structure[$k]['type']) && 
+        $v = $this->_mutateOnSet($k, $v);
+
+        if (isset($this->structure[$k]['type']) && 
 			$this->structure[$k]['type'] == 'o' && 
 			isset($this->data[$k]) && $this->data[$k] instanceof mvc_AbstractModel
 		) {
