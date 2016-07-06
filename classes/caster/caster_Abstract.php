@@ -48,7 +48,7 @@ abstract class caster_Abstract  {
 		while(true) {
 			$pos = strpos($s, '%', $pos);
 			if($pos === false) return $count;
-			if($pos + 2 > strlen($s)) throw new Exception('Invalid format string');
+			if($pos + 2 > strlen($s)) throw new Exception('Invalid format string!');
 			if(substr($s, $pos + 1, 1) != "%") $count++;
 			$pos += 2;
 		}

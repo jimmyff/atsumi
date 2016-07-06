@@ -22,7 +22,7 @@ class cache_MemcacheHandler extends cache_AbstractHandler {
 	const DEFAULT_TTL	= 0;
 
 	/**
-	 * Constant defining a minite storage duration
+	 * Constant defining a minute storage duration
 	 * @var integer
 	 */
 	const DURATION_MINUTE = 60;

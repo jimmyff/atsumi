@@ -29,7 +29,7 @@ class atsumi_DateTime {
 		return $d->format($formatString);
 	}
 
-	public function output ($outputType) {
+	public function output ($outputType = null) {
 		return (String) $this->timestamp;
 	}
 }
