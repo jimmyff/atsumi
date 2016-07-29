@@ -33,13 +33,16 @@ abstract class mvc_AbstractView {
 		}
 		return $template;
  	}
- 	private function get($idx) {
- 		if(array_key_exists($idx, $this->data))
- 			return $this->data[$idx];
- //		else throw new Exception(sf("View referenced undefined data : %s", $idx));
- 		// commented the below out as could cause bugs... will see how annoying above gets
- 		return null;
- 	}
+    public function has($idx) {
+        return(array_key_exists($idx, $this->data));
+    }
+    private function get($idx) {
+        if(array_key_exists($idx, $this->data))
+            return $this->data[$idx];
+        //		else throw new Exception(sf("View referenced undefined data : %s", $idx));
+        // commented the below out as could cause bugs... will see how annoying above gets
+        return null;
+    }
  	public function __get($name) {
 		$matches = null;
 		if(preg_match('/^get_(.+)$/', $name, $matches)) {
