@@ -2,6 +2,8 @@
 
 class widget_DateElement extends widget_AbstractElement {
 	private $options = array();
+    
+    private $strings = array();
 
 	public function __construct($args) {
 
@@ -10,6 +12,17 @@ class widget_DateElement extends widget_AbstractElement {
 
 		if(isset($args['yearRange'][1])) $this->yearRange[1] = $args['yearRange'][1];
 		else $this->yearRange[1] = idate("Y");
+
+
+        $this->strings = array(
+            'day'=>'Day',
+            'month'=>'Month',
+            'year'=>'Year'
+
+        );
+        
+        if(isset($args['strings'])) $this->strings = array_merge($this->strings, $args['strings']);
+        else ;
 	}
 
 	function renderElement() {
@@ -19,7 +32,7 @@ class widget_DateElement extends widget_AbstractElement {
 		$yearValue = isset($date['year']) ? $date['year'] : date("Y");
 
 
-		$dayOptions = sfl("<option value='' >Day</option>");
+		$dayOptions = sfl("<option value='' >%s</option>", $this->strings['day']);
 		for($i = 1; $i <= 31; $i++) {
 			// TODO: Bug here days don't always return the correct number of days...
 
@@ -32,7 +45,7 @@ class widget_DateElement extends widget_AbstractElement {
 				$dayOptions .= sfl("<option value='%s'>%s</option>", $dayValueLeading, $dayNumber);
 
 		}
-		$monthOptions = sfl("<option value='' >Month</option>");
+		$monthOptions = sfl("<option value='' >%s</option>", $this->strings['month']);
 		for($i = 1; $i <= 12; $i++) {
 			if(strval($monthValue) == strval($i))
 				$monthOptions .= sfl("<option value='%s' selected='selected'>%s</option>", date("m", mktime(0, 0, 0, $i, 1, date("Y"))), date("F", mktime(0, 0, 0, $i, 1, date("Y"))));
@@ -41,7 +54,7 @@ class widget_DateElement extends widget_AbstractElement {
 
 		}
 
-		$yearOptions = sfl("<option value='' >Year</option>");
+		$yearOptions = sfl("<option value='' >%s</option>", $this->strings['year']);
 		for($i = $this->yearRange[1]; $i >=  $this->yearRange[0]; $i--) {
 			if(strval($yearValue) == strval($i))
 				$yearOptions .= sfl("<option value='%s' selected='selected'>%s</option>", $i, $i);
