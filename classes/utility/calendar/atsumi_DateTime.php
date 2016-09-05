@@ -15,10 +15,15 @@ class atsumi_DateTime {
 	public function __construct ($timestamp) {
 		$this->timestamp 	= (int) $timestamp;
 	}
+    static public function fromString ($strDate) {
+        return new self(strtotime($strDate));
+    }
 
-	public function __toString() {
-		return (String) $this->timestamp;
-	}
+    public function __toString() {
+        return (String) $this->timestamp;
+    }
+
+    
 
 	public function format($formatString = null) {
 		if (is_null($formatString)) $formatString = self::FORMAT_FRIENDLY;
