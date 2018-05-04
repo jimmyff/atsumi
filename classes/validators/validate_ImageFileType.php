@@ -7,7 +7,7 @@
  * Window - Preferences - PHPeclipse - PHP - Code Templates
  */
 
-  class validate_FileType extends validate_AbstractValidator {
+  class validate_ImageFileType extends validate_AbstractValidator {
   	private $mimeTypes = array();
   	private $extensions = array();
   	private $extensionText = '';
@@ -53,7 +53,23 @@
   								'wav'  	=> array('audio/wav', 'audio/x-wav', 'audio/wave', 'audio/x-pn-wav'),
   								'ogg'  	=> array('audio/x-ogg', 'application/x-ogg'),
   							);
-
+    
+    function minimime($fname) {
+      $fh=fopen($fname,'rb');
+      if ($fh) {
+          $bytes6=fread($fh,6);
+          fclose($fh);
+          if ($bytes6===false) return false;
+          if (substr($bytes6,0,3)=="\xff\xd8\xff") return 'image/jpeg';
+          if ($bytes6=="\x89PNG\x0d\x0a") return 'image/png';
+          if ($bytes6=="GIF87a" || $bytes6=="GIF89a") return 'image/gif';
+          
+          
+          return 'application/octet-stream';
+      }
+      return false;
+    }
+      
  	public function __construct($types) {
  		$this->extensions = $types;
  		foreach($types as $type) {
@@ -82,45 +98,12 @@
 		return $extensionArr;
  	}
  	public function validate($data) {
-
- 		// test if the host supports finfo
- 		try {
- 			$supportsFinfo = class_exists('finfo');
- 		} catch(loader_ClassNotFoundException  $e) {
-	 		$supportsFinfo = false;
- 		}
-
+        $mime = $this->minimime($data['tmp_name']);
         
- 		if($data == '' || is_null($data)|| empty($data)) {
-            return true;
-
-            
-//        TODO: Doesn't work as /etc/magic.mime is empty
-//        } else if (isset($data['tmp_name'])) {
-//            $mime = mime_content_type($data['tmp_name']);
-//            if(in_array($mime, $this->mimeTypes)) return true;
-//            $incorrectExtensionArr = $this->getExtensionFromMime($mime);
-            
-            
-        // if finfo class exists then use that for mime validation
- 		} elseif($supportsFinfo && $data['tmp_name']) {
-
-			$finfo = new finfo(FILEINFO_MIME);
-			$mime = $finfo->file($data['tmp_name']);
-			if(strpos($mime,';')) $mime = substr($mime,0,strpos($mime,';'));
- 			if(in_array($mime, $this->mimeTypes)) return true;
-            
- 			$incorrectExtensionArr = $this->getExtensionFromMime($mime);
- 		// reply on the browsers mime type : not always present & secruity vunrebility
- 		} elseif(isset($data['type'])) {
- 			if(in_array($data['type'], $this->mimeTypes)) return true;
- 			$incorrectExtensionArr = $this->getExtensionFromMime($data['type']);
- 		} else {
-            
-
-        }
- 		throw new ValidationIncorrectFileTypeException(sf('File should be a valid %s%s', $this->extensionText, count($incorrectExtensionArr)?sf(' (not a %s)', implode('/', $incorrectExtensionArr)):''));
-
+        dump($mime);
+        exit;
+        if(in_array($mime, $this->mimeTypes)) return true;
+ 		throw new ValidationIncorrectFileTypeException(sf('File should be a valid %s', $this->extensionText));
  	}
 
 
