@@ -393,9 +393,12 @@ class atsumi_AppHandler {
 		
 		// page_name turns in to after_name 
 		$afterMethod = 'after_'.substr($this->parserData['method'],5);
-		
-		if (method_exists($this->controller, $afterMethod)) 
-			$this->controller->processRequest($afterMethod, $this->parserData['args']);
+
+        if (method_exists($this->controller, $afterMethod))
+            $this->controller->processRequest($afterMethod, $this->parserData['args']);
+
+        if (method_exists($this->controller, 'postConnection'))
+            $this->controller->processRequest('postConnection', $this->parserData['args']);
 
 	}
 }
