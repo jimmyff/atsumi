@@ -399,7 +399,7 @@ class atsumi_AppHandler {
 
         if (method_exists($this->controller, 'postConnection'))
             $this->controller->processRequest('postConnection', $this->parserData['args']);
-
+        
 	}
 }
 ?>

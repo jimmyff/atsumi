@@ -141,6 +141,8 @@ abstract class mvc_AbstractController {
 			header('Location: ' . $_SERVER['REDIRECT_SCRIPT_URI']. $anchor)
 		: 	header('Location: ' . $protocol . $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']. $anchor);
 
+        Atsumi::app__dispatchConnection();
+        Atsumi::app__postConnectionProcess();
 		exit;
 	}
 
@@ -149,16 +151,20 @@ abstract class mvc_AbstractController {
 
 		if(substr($url, 0, 7) == "http://" || substr($url, 0, 8) == "https://") {
 			header('Location: ' . $url, true, $httpResponseCode);
-			exit;
-		}
+		} else {
 
-		if (!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') $protocol = 'http://';
-		else $protocol = 'https://';
-		
-		$domain = $_SERVER['HTTP_HOST'];
-		unset($_POST);
-		header('Location: ' . $protocol . $domain.$url, true, $httpResponseCode);
-		exit;
+            if (!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') $protocol = 'http://';
+            else $protocol = 'https://';
+
+            $domain = $_SERVER['HTTP_HOST'];
+            unset($_POST);
+            header('Location: ' . $protocol . $domain . $url, true, $httpResponseCode);
+        }
+
+        Atsumi::app__dispatchConnection();
+        Atsumi::app__postConnectionProcess();
+        exit;
+
 	}
 
 	// controller page data
